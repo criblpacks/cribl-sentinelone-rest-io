@@ -1,0 +1,19 @@
+{
+  "name": "cribl-sentinelone-rest-io",
+  "version": "0.0.1",
+  "minLogStreamVersion": "4.12.0",
+  "author": "Cribl Packs Team",
+  "description": "pack to process data ect",
+  "displayName": "cribl-sentinelone-rest-io",
+  "tags": {
+    "streamtags": [],
+    "dataType": [
+      "logs"
+    ],
+    "useCase": [
+      "reduction",
+      "routing"
+    ]
+  },
+  "exports": []
+}
