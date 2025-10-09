@@ -1,0 +1,218 @@
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Map SentinelOne Asset data to the Device Inventory (5001) Class
+  - id: serde
+    filter: "true"
+    disabled: true
+    conf:
+      mode: extract
+      type: json
+      srcField: _raw
+    description: DELETE ME
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - name: activity_id
+          value: "2"
+        - disabled: false
+          name: activity_name
+          value: "'Collect'"
+        - name: category_uid
+          value: "5"
+        - disabled: false
+          name: category_name
+          value: "'Discovery'"
+        - name: class_uid
+          value: "5001"
+        - disabled: false
+          name: class_name
+          value: "'Device Inventory Info'"
+        - name: message
+          value: "'SentinelOne Asset Inventory'"
+        - disabled: false
+          name: raw_data
+          value: _raw
+        - disabled: false
+          name: risk_level_id
+          value: "riskFactors.includes('High Value') && riskFactors.includes('Unresolved
+            Alerts') ? 4 : riskFactors.includes('High Value') ? 3 :
+            !riskFactors.includes('High Value') &&
+            riskFactors.includes('Unresolved Alerts') ? 2 : 1"
+        - disabled: false
+          name: risk_level
+          value: "riskFactors.includes('High Value') && riskFactors.includes('Unresolved
+            Alerts') ? 'Critical' : riskFactors.includes('High Value') ? 'High'
+            : !riskFactors.includes('High Value') &&
+            riskFactors.includes('Unresolved Alerts') ? 'Medium' : 'Low'"
+        - disabled: false
+          name: risk_details
+          value: riskFactors
+        - name: severity_id
+          value: "1"
+        - disabled: false
+          name: severity
+          value: "'Informational'"
+        - name: status_id
+          value: "1"
+        - name: status
+          value: "'Success'"
+        - name: time
+          value: _time
+        - name: timezone_offset
+          value: "0"
+        - name: type_uid
+          value: "500102"
+        - disabled: false
+          name: type_name
+          value: "'Device Inventory Info: Collect'"
+      keep: []
+      remove: []
+    description: Set OSCF Device Inventory  fields
+    groupId: CGZA2N
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: os_object
+          value: "{}"
+        - disabled: false
+          name: os_object.name
+          value: resourceType
+        - disabled: false
+          name: os_object.type_id
+          value: 'resourceType.includes("Windows") ? 100 : resourceType.includes("Linux")
+            ? 200 : resourceType.includes("Mac") ? 300  : 0'
+        - disabled: false
+          name: os_object.type
+          value: "resourceType.includes(\"Windows\") ? 'Windows' :
+            resourceType.includes(\"Linux\") ? 'Linux' :
+            resourceType.includes(\"Mac\") ? 'macOS' : 'Unknown'"
+    groupId: CGZA2N
+    description: Set device OS field
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - name: device
+          value: "{}"
+        - disabled: false
+          name: device.os
+          value: os_object
+        - name: device.uid
+          value: id
+        - name: device.hostname
+          value: name
+        - disabled: false
+          name: device.model
+          value: modelName
+        - name: device.type_id
+          value: 'resourceType.includes("Windows") ? 2 : resourceType.includes("Linux") ?
+            1 : resourceType.includes("Mac") ? 2 : 0'
+        - name: device.type
+          value: "resourceType.includes(\"Server\") ? \"Server\" :
+            resourceType.includes(\"Windows\") || resourceType.includes(\"Mac\")
+            ? 'Desktop' : \"Unknown\""
+        - disabled: false
+          name: device.first_seen_time
+          value: firstSeenDt
+        - disabled: false
+          name: device.last_seen_time
+          value: lastUpdateDt
+        - disabled: false
+          name: device.ip
+          value: agent.lastReportedIp
+        - disabled: false
+          name: device.owner
+          value: "assetContactEmail ? assetContactEmail : osUsername"
+    description: Set device field
+    groupId: CGZA2N
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - name: metadata
+          value: "{}"
+        - name: metadata.product
+          value: "{}"
+        - name: metadata.product.name
+          value: "'SentinelOne API'"
+        - name: metadata.product.vendor_name
+          value: "'SentinelOne'"
+        - name: metadata.version
+          value: "'2.1'"
+        - name: metadata.tenant_uid
+          value: s1AccountId
+    description: Set metadata Device
+    groupId: CGZA2N
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: unmapped
+          value: "{}"
+        - disabled: false
+          name: unmapped.assetCriticality
+          value: assetCriticality
+        - disabled: false
+          name: unmapped. agent.agentVersion
+          value: agent.agentVersion
+        - disabled: false
+          name: unmapped. agent.upToDate
+          value: agent.upToDate
+        - disabled: false
+          name: unmapped. alerts
+          value: alerts
+        - disabled: false
+          name: unmapped. assetStatus
+          value: assetStatus
+        - disabled: false
+          name: unmapped.detectedFromSite
+          value: detectedFromSite
+        - disabled: false
+          name: unmapped.notes
+          value: notes
+    groupId: CGZA2N
+    description: Set unmapped field
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      keep:
+        - unmapped.*
+        - message
+        - status_detail
+        - status_code
+        - time
+        - status_id
+        - status
+        - timezone_offset
+        - device.*
+        - metadata.*
+        - activity_*
+        - raw_data
+        - class*
+        - category*
+        - type*
+        - severity*
+        - risk_*
+      remove:
+        - "*"
+        - __*
+    description: Drop non-OCSF fields
+streamtags:
+  - cpe
+groups:
+  CGZA2N:
+    name: Set top-level OCSF Device Inventory  fields
+    index: 2

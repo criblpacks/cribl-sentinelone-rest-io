@@ -1,0 +1,250 @@
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Map SentinelOne GraphQL Alerts data to the Detection Finding (2004) Class
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: activity_id
+          value: "status == 'NEW' ? 1 : status == 'IN_PROGRESS' ? 2 : status == 'RESOLVED'
+            ? 3 : 0"
+        - disabled: false
+          name: activity_name
+          value: "status == 'NEW' ? 'Create' : status == 'IN_PROGRESS' ? 'Update' : status
+            == 'RESOLVED' ? 'Close' : 0"
+        - name: category_uid
+          value: "2"
+        - disabled: false
+          name: category_name
+          value: "'Findings'"
+        - name: class_uid
+          value: "2004"
+        - disabled: false
+          name: class_name
+          value: "'Detection Finding'"
+        - disabled: false
+          name: comment
+          value: description
+        - name: is_alert
+          value: "true"
+        - name: message
+          value: name
+        - name: severity_id
+          value: "severity == 'CRITICAL' ? 5 : severity == 'HIGH' ? 4 : severity ==
+            'MEDIUM' ? 3 : severity =='LOW' ? 2 : severity === 'INFO' ? 1 : 0"
+        - disabled: false
+          name: severity
+          value: "severity == 'CRITICAL' ? 'Critical' : severity == 'HIGH' ? 'High' :
+            severity == 'MEDIUM' ? 'Medium' : severity =='LOW' ? 'Low' :
+            severity === 'INFO' ? 'Informational' : 0"
+        - name: status_id
+          value: "status == 'NEW' ? 1 : status == 'IN_PROGRESS' ? 2 : status == 'RESOLVED'
+            ? 4 : 0"
+        - name: status_code
+          value: "status == 'NEW' ? 'New' : status == 'IN_PROGRESS' ? 'In Progress' :
+            status == 'RESOLVED' ? 'Resolved' : 0"
+        - disabled: false
+          name: status_detail
+          value: result
+        - name: time
+          value: _time
+        - name: timezone_offset
+          value: "0"
+        - name: type_uid
+          value: 2004 * 100 + activity_id
+        - disabled: false
+          name: type_name
+          value: "type_uid === 200400 ? 'Detection Finding: Unknown' : type_uid === 200401
+            ? 'Detection Finding: Create' : type_uid === 200402 ? 'Detection
+            Finding: Update' : type_uid === 200403 ? 'Detection Finding: Close'
+            : 'Detection Finding: Other'"
+        - disabled: false
+          name: raw_data
+          value: _raw
+        - disabled: false
+          name: confidence_id
+          value: "confidenceLevel == 'MAILICIOUS' ? 3 : confidenceLevel == 'SUSPICIOUS' ?
+            2 : confidenceLevel == 'INFORMATIONAL' ? 1 : 0"
+        - disabled: false
+          name: confidence
+          value: "confidenceLevel == 'MAILICIOUS' ? 'High' : confidenceLevel ==
+            'SUSPICIOUS' ? 'Medium' : confidenceLevel == 'INFORMATIONAL' ? 'Low'
+            : 'Unknown'"
+    description: Set top-level OCSF Detection fields
+    groupId: c5yBAR
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: device
+          value: "{}"
+        - disabled: false
+          name: device.domain
+          value: detectionTime.asset.domain
+        - disabled: false
+          name: device.ip
+          value: detectionTime.asset.ipV4
+        - disabled: false
+          name: device.hostname
+          value: asset.name
+        - disabled: false
+          name: device.owner
+          value: detectionTime.asset.lastLoggedInUser
+        - disabled: false
+          name: device.os
+          value: "{}"
+        - disabled: false
+          name: device.os.name
+          value: detectionTime.asset.osName
+        - disabled: false
+          name: device.os.version
+          value: detectionTime.asset.osRevision
+        - disabled: false
+          name: device.os.type_id
+          value: 'detectionTime.asset.osName.includes("Windows") ? 100 :
+            detectionTime.asset.osName.includes("Linux") ? 200 :
+            detectionTime.asset.osName.includes("Mac") ? 300  : 0'
+        - disabled: false
+          name: device.os.type
+          value: "detectionTime.asset.osName.includes(\"Windows\") ? 'Windows' :
+            detectionTime.asset.osName.includes(\"Linux\") ? 'Linux' :
+            detectionTime.asset.osName.includes(\"Mac\") ? 'macOS' : 'Unknown'"
+    groupId: c5yBAR
+    description: Set device Detection field
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: metadata
+          value: "{}"
+        - name: metadata.product
+          value: "{}"
+        - name: metadata.product.name
+          value: "'SentinelOne GraphQL API'"
+        - name: metadata.product.vendor_name
+          value: "'SentinelOne'"
+        - name: metadata.product.version
+          value: "'2.1'"
+        - disabled: false
+          name: metadata.version
+          value: "'1.4.0'"
+        - disabled: false
+          name: metadata.tenant_uid
+          value: detectionTime.scope.accountId
+        - disabled: false
+          name: metadata.uid
+          value: id
+    description: Set metadata Detection field
+    groupId: c5yBAR
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: finding_info
+          value: "{}"
+        - name: finding_info.uid
+          value: alertInfo.alertId
+        - name: finding_info.title
+          value: name
+        - disabled: false
+          name: finding_info.desc
+          value: description
+        - disabled: false
+          name: finding_info.data_sources
+          value: dataSources
+        - disabled: false
+          name: finding_info.analytic
+          value: "{}"
+        - disabled: false
+          name: finding_info.analytic.category
+          value: analytics.category
+        - disabled: false
+          name: finding_info.analytic.name
+          value: analytics.name
+        - disabled: false
+          name: finding_info.analytic.type_id
+          value: "1"
+        - disabled: false
+          name: finding_info.analytic.type
+          value: "'Rule'"
+    description: Set finding_info Detection field
+    groupId: c5yBAR
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: observables
+          value: "[{name:process.file.name, type_id:7},{name:process.cmdLine, type_id:13},
+            {name:detectionTime.asset.lastLoggedInUser, type_id:4},
+            {name:process.file.sha1, type_id:8}, {name:asset.name, type_id:1},
+            {name:detectionTime.asset.ipV4, type_id:2}]"
+    groupId: c5yBAR
+    description: Set observables Detection field
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: unmapped
+          value: "{}"
+        - disabled: false
+          name: unmapped.analystVerdict
+          value: analystVerdict
+        - disabled: false
+          name: unmapped.assignee_email
+          value: assignee.email
+        - disabled: false
+          name: unmapped.assignee_name
+          value: assignee.fullName
+        - disabled: false
+          name: unmapped.classification
+          value: classification
+        - disabled: false
+          name: unmapped.storylineId
+          value: storylineId
+    groupId: c5yBAR
+    description: Set unmapped field
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      keep:
+        - unmapped.*
+        - message
+        - finding_info.*
+        - time
+        - observables.*
+        - timezone_offset
+        - is_alert
+        - type_uid
+        - metadata.*
+        - activity*
+        - severity*
+        - confidence*
+        - raw_data
+        - status_*
+        - device*
+        - resources*
+        - category_*
+        - class_*
+      remove:
+        - "*"
+        - cribl_*
+    description: Drop fields non-OCSF fields
+streamtags:
+  - cpe
+groups:
+  c5yBAR:
+    name: Set OCSF Detection Finding fields
+    index: 1

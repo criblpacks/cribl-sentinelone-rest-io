@@ -1,0 +1,82 @@
+id: default
+groups: {}
+comments: []
+routes:
+  - id: wUkZoX
+    name: cribl_sentinelone_vulnerabilities
+    final: true
+    disabled: false
+    pipeline: cribl_sentinelone_vulnerabilities
+    description: Process SentinelOne Vulerabilities
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __packsource == 'cribl-sentinelone-rest-io.sentinelone-vulnerabilities'
+    clones: []
+    output: default
+  - id: wUkZaX
+    name: cribl_sentinelone_vulnerabilities_graphql
+    final: true
+    disabled: false
+    pipeline: cribl_sentinelone_vulnerabilities_graphql
+    description: Process SentinelOne GraphQL Vulerabilities
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __packsource ==
+      'cribl-sentinelone-rest-io.sentinelone-vulnerabilities-graphql'
+    clones: []
+    output: default
+  - id: wUkZbX
+    name: cribl_sentinelone_alerts
+    final: true
+    disabled: false
+    pipeline: cribl_sentinelone_alerts
+    description: Process SentinelOne Alerts
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __packsource == 'cribl-sentinelone-rest-io.sentinelone-alerts'
+    clones: []
+    output: default
+  - id: wUkZcX
+    name: cribl_sentinelone_alerts_graphql
+    final: true
+    disabled: false
+    pipeline: cribl_sentinelone_alerts_graphql
+    description: Process SentinelOne GraphQL Alerts
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __packsource == 'cribl-sentinelone-rest-io.sentinelone-alerts-graphql'
+    clones: []
+    output: default
+  - id: wUkZdX
+    name: cribl_sentinelone_assets
+    final: true
+    disabled: false
+    pipeline: cribl_sentinelone_assets
+    description: Process SentinelOne Assets
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __packsource == 'cribl-sentinelone-rest-io.sentinelone-assets'
+    clones: []
+    output: default
+  - id: wUkZeX
+    name: cribl_sentinelone_agents
+    final: true
+    disabled: false
+    pipeline: cribl_sentinelone_agents
+    description: Process SentinelOne Agent Inventory
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __packsource == 'cribl-sentinelone-rest-io.sentinelone-agents'
+    clones: []
+    output: default
+  - id: default
+    name: default
+    final: true
+    disabled: false
+    pipeline: main
+    description: ""
+    enableOutputExpression: false
+    outputExpression: null
+    filter: "true"
+    clones: []
+    output: default

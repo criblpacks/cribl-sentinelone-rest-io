@@ -1,0 +1,205 @@
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Map SentinelOne GraphQL Vulnerability data to the Vulnerability Finding
+        (2002) Class
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: activity_id
+          value: "1"
+        - disabled: false
+          name: activity_name
+          value: "'Create'"
+        - name: category_uid
+          value: "2"
+        - disabled: false
+          name: category_name
+          value: "'Findings'"
+        - name: class_uid
+          value: "2002"
+        - disabled: false
+          name: class_name
+          value: "'Vulnerability Finding'"
+        - disabled: false
+          name: confidence_score
+          value: cve.score
+        - name: finding_info
+          value: "{}"
+        - name: finding_info.uid
+          value: id
+        - name: finding_info.title
+          value: name
+          disabled: false
+        - disabled: false
+          name: finding_info.product
+          value: "{}"
+        - disabled: false
+          name: finding_info.product.name
+          value: product
+        - disabled: false
+          name: finding_info.product.vendor
+          value: "'SentinelOne'"
+        - disabled: false
+          name: is_alert
+          value: "false"
+        - name: message
+          value: name
+        - name: severity_id
+          value: "severity === 'LOW' ? 2 : severity === 'MEDIUM' ? 3 : severity === 'HIGH'
+            ? 4 : severity === 'CRITICAL' ? 5 : 0"
+        - disabled: false
+          name: severity
+          value: "severity === 'LOW' ? 'Low' : severity === 'MEDIUM' ? 'Medium' : severity
+            === 'HIGH' ? 'High' : severity === 'CRITICAL' ? 'Critical' :
+            'Unknown'"
+        - disabled: false
+          name: status_code
+          value: status
+        - name: status_detail
+          value: status + ' on ' + detectedAt
+        - name: status_id
+          value: "status === 'NEW' ? 1 : status == 'IN_PROGRESS' ? 2 : status ==
+            'RESOLVED' ? 4 : 0"
+        - disabled: false
+          name: status
+          value: "status === 'NEW' ? 'New' : status == 'IN_PROGRESS' ? 'In Progress' :
+            status == 'RESOLVED' ? 'Resolved' : 0"
+        - name: time
+          value: detectedAt
+        - name: type_uid
+          value: class_uid * 100 + activity_id
+        - name: vulnerabilities
+          value: "cve.score ? [{cve:{uid: cve.id, title: name, product: software.vendor,
+            created_time: cve.publishedDate, cvss:[{base_score: cve.score,
+            severity:severity}]}}] : ''"
+        - disabled: false
+          name: raw_data
+          value: _raw
+    description: Set main OCSF Vulnerability fields
+    groupId: tlhTmH
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: os_object
+          value: "{}"
+        - disabled: false
+          name: os_object.name
+          value: asset.osType
+        - disabled: false
+          name: os_object.type_id
+          value: 'asset.osType.includes("WINDOWS") ? 100 : asset.osType.includes("LINUX")
+            ? 200 : asset.osType.includes("MAC") ? 300 : 0'
+        - disabled: false
+          name: os_object.type
+          value: "asset.osType.includes(\"WINDOWS\") ? 'Windows' :
+            asset.osType.includes(\"LINUX\") ? 'Linux' :
+            asset.osType.includes(\"MAC\") ? 'macOS' : 'Unknown'"
+    groupId: tlhTmH
+    description: Set os field
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: device
+          value: "{}"
+        - disabled: false
+          name: device.os
+          value: os_object
+        - disabled: false
+          name: device.domain
+          value: domain
+        - name: device.hostname
+          value: asset.name
+        - name: device.type_id
+          value: "asset.category == 'Server' ? 1 : asset.category('orkstation') ||
+            asset.category('esktop') ? 2 : 0"
+        - name: device.type
+          value: "asset.category == 'Server' ? 'Server' :
+            asset.category.includes('orkstation') ||
+            asset.category.includes('esktop') ? 'Desktop' : 'Unknown'"
+        - disabled: false
+          name: device.uid
+          value: asset.id
+    description: Set device Vulnerability field
+    groupId: tlhTmH
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: metadata
+          value: "{}"
+        - name: metadata.product
+          value: "{}"
+        - name: metadata.product.name
+          value: "'SentinelOne GraphQL API'"
+        - name: metadata.product.vendor_name
+          value: "'SentinelOne'"
+        - name: metadata.product.version
+          value: "'2.1'"
+        - disabled: false
+          name: metadata.version
+          value: "'1.4.0'"
+    description: Set metadata Vulnerability field
+    groupId: tlhTmH
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: unmapped
+          value: "{}"
+        - name: unmapped.criticality
+          value: asset.criticality
+        - name: unmapped.analystVerdict
+          value: analystVerdict
+        - name: unmapped.assignee
+          value: assignee
+        - name: unmapped.software
+          value: software
+    description: Set unmapped Vulnerability field
+    groupId: tlhTmH
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      keep:
+        - unmapped.*
+        - message
+        - finding_info.*
+        - time
+        - activity_id
+        - class_uid
+        - type_uid
+        - metadata.*
+        - vulnerabilities.*
+        - confidence*
+        - category*
+        - device*
+        - status*
+        - severity*
+        - raw_data
+      remove:
+        - "*"
+        - _*
+    description: Drop non-OCSF fields
+streamtags:
+  - cpe
+groups:
+  tlhTmH:
+    name: Set OCSF Vulnerability fields
+    index: 1
+    disabled: false
+description: |-
+  Map Crowdstrike Vulnerabilities to OCSF Class 2002 - Vulnerability Finding. 
+
+  https://schema.ocsf.io/1.4.0/classes/vulnerability_finding

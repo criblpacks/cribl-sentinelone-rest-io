@@ -1,0 +1,40 @@
+SentinelOne API Ruleset:
+  lib: custom
+  minRawLength: 256
+  description: SentinelOne-API
+  rules:
+    - condition: _raw.includes('node') && (_raw.include('alerts') ||
+        _raw.includes('vulnerabilities'))
+      type: json_array
+      timestampAnchorRegex: /detectedAt/
+      timestamp:
+        type: auto
+        length: 150
+      timestampTimezone: UTC
+      timestampEarliest: -420weeks
+      timestampLatest: +1week
+      maxEventBytes: 134217728
+      disabled: false
+      parserEnabled: false
+      shouldUseDataRaw: false
+      jsonExtractAll: false
+      eventBreakerRegex: /[\n\r]+(?!\s)/
+      name: SentinelOne GraphQL API
+      jsonArrayField: edges
+    - condition: "true"
+      type: json_array
+      timestampAnchorRegex: /updatedAt|lastScanDate/
+      timestamp:
+        type: auto
+        length: 150
+      timestampTimezone: local
+      timestampEarliest: -420weeks
+      timestampLatest: +1week
+      maxEventBytes: 134217728
+      disabled: false
+      parserEnabled: false
+      shouldUseDataRaw: false
+      jsonExtractAll: false
+      eventBreakerRegex: /[\n\r]+(?!\s)/
+      name: SentinelOne API
+      jsonArrayField: data

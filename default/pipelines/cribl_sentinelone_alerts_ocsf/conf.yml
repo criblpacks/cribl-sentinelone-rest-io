@@ -1,0 +1,237 @@
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Map SentinelOne Alerts data to the Detection Finding (2004) Class
+  - id: serde
+    filter: "true"
+    disabled: true
+    conf:
+      mode: extract
+      type: json
+      srcField: _raw
+    description: Delete Me
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: activity_id
+          value: "alertInfo.incidentStatus == 'Unresolved' ? 1 :
+            alertInfo.incidentStatus.includes('ogress') ? 2 :
+            alertInfo.incidentStatus.includes('esolved') ? 3 : 0"
+        - disabled: false
+          name: activity_name
+          value: "alertInfo.incidentStatus == 'Unresolved' ? 'Create' :
+            _raw.alertInfo.incidentStatus.includes('ogress') ? 'Update' :
+            alertInfo.incidentStatus.includes('esolved') ? 'Close' : 0"
+        - name: category_uid
+          value: "2"
+        - disabled: false
+          name: category_name
+          value: "'Findings'"
+        - name: class_uid
+          value: "2004"
+        - disabled: false
+          name: class_name
+          value: "'Detection Finding'"
+        - name: is_alert
+          value: "true"
+        - name: message
+          value: ruleInfo.name
+        - name: severity_id
+          value: "ruleInfo.severity == 'High' ? 4 : ruleInfo.severity == 'Medium' ? 3 :
+            ruleInfo.severity =='Low' ? 2 : ruleInfo.severity ===
+            'Informational' ? 1 : 0"
+        - disabled: false
+          name: severity
+          value: ruleInfo.severity
+        - name: status_id
+          value: "alertInfo.incidentStatus == 'Unresolved' ? 1 :
+            alertInfo.incidentStatus.includes('ogress') ? 2 :
+            alertInfo.incidentStatus.includes('esolved') ? 4 : 0"
+        - name: status_code
+          value: "alertInfo.incidentStatus == 'Unresolved' ? 'New' :
+            alertInfo.incidentStatus.includes('ogress') ? 'In Progress' :
+            alertInfo.incidentStatus.includes('esolved') ? 'Resolved' :
+            'Unknown'"
+        - name: time
+          value: _time
+        - name: timezone_offset
+          value: "0"
+        - name: type_uid
+          value: 2004 * 100 + activity_id
+        - disabled: false
+          name: type_name
+          value: "type_uid === 200400 ? 'Detection Finding: Unknown' : type_uid === 200401
+            ? 'Detection Finding: Create' : type_uid === 200402 ? 'Detection
+            Finding: Update' : type_uid === 200403 ? 'Detection Finding: Close'
+            : 'Detection Finding: Other'"
+        - disabled: false
+          name: raw_data
+          value: _raw
+    description: Set top-level OCSF Detection fields
+    groupId: c5yBAR
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: device
+          value: "{}"
+        - disabled: false
+          name: device.hostname
+          value: agentDetectionInfo.name
+        - disabled: false
+          name: device.os
+          value: "{}"
+        - disabled: false
+          name: device.os.name
+          value: agentDetectionInfo.osName
+        - disabled: false
+          name: device.os.version
+          value: agentDetectionInfo.osRevision
+        - disabled: false
+          name: device.os.type_id
+          value: 'agentDetectionInfo.osName.includes("Windows") ? 100 :
+            agentDetectionInfo.osName.includes("Linux") ? 200 :
+            agentDetectionInfo.osName.includes("Mac") ? 300  : 0'
+        - disabled: false
+          name: device.os.type
+          value: "agentDetectionInfo.osName.includes(\"Windows\") ? 'Windows' :
+            agentDetectionInfo.osName.includes(\"Linux\") ? 'Linux' :
+            agentDetectionInfo.osName.includes(\"Mac\") ? 'macOS' : 'Unknown'"
+        - disabled: false
+          name: device.type_id
+          value: "agentDetectionInfo.machineType == 'server' ? 1 :
+            agentDetectionInfo.machineType.includes('orkstation') ||
+            agentDetectionInfo.machineType.includes('esktop') ? 2 : 0"
+        - disabled: false
+          name: device.type
+          value: "agentDetectionInfo.machineType == 'server' ? 'Server' :
+            agentDetectionInfo.machineType.includes('orkstation') ||
+            agentDetectionInfo.machineType.includes('esktop') ? 'Desktop' :
+            'Unknown'"
+    groupId: c5yBAR
+    description: Set device Detection field
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: metadata
+          value: "{}"
+        - name: metadata.product
+          value: "{}"
+        - name: metadata.product.name
+          value: "'SentinelOne API'"
+        - name: metadata.product.vendor_name
+          value: "'SentinelOne'"
+        - name: metadata.product.version
+          value: "'2.1'"
+        - disabled: false
+          name: metadata.version
+          value: "'1.4.0'"
+        - disabled: false
+          name: metadata.tenant_uid
+          value: agentDetectionInfo.accountId
+    description: Set metadata Detection field
+    groupId: c5yBAR
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: finding_info
+          value: "{}"
+        - name: finding_info.uid
+          value: alertInfo.alertId
+        - name: finding_info.title
+          value: ruleInfo.name
+        - disabled: false
+          name: finding_info.desc
+          value: ruleInfo.description
+        - disabled: false
+          name: finding_info.data_sources
+          value: ruleInfo.s1ql
+        - disabled: false
+          name: finding_info.analytic
+          value: "{}"
+        - disabled: false
+          name: finding_info.analytic.category
+          value: ruleInfo.queryType
+        - disabled: false
+          name: finding_info.analytic.name
+          value: ruleInfo.name
+        - disabled: false
+          name: finding_info.analytic.type_id
+          value: "1"
+        - disabled: false
+          name: finding_info.analytic.type
+          value: "'Rule'"
+        - disabled: false
+          name: finding_info.analytic.desc
+          value: ruleInfo.desc
+    description: Set finding_info Detection field
+    groupId: c5yBAR
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: observable
+          value: "{}"
+    groupId: c5yBAR
+    description: Set observables Detection field
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: unmapped
+          value: "{}"
+        - disabled: false
+          name: unmapped.scopeLevel
+          value: ruleInfo.scopeLevel
+        - disabled: false
+          name: unmapped.treatAsThreat
+          value: ruleInfo.treatAsThreat
+    groupId: c5yBAR
+    description: Set unmapped field
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      keep:
+        - unmapped.*
+        - message
+        - finding_info.*
+        - time
+        - observables.*
+        - timezone_offset
+        - is_alert
+        - type_uid
+        - metadata.*
+        - activity*
+        - severity*
+        - confidence*
+        - raw_data
+        - status_*
+        - device*
+        - resources*
+        - category_*
+        - class_*
+      remove:
+        - "*"
+        - cribl_*
+    description: Drop fields non-OCSF fields
+streamtags:
+  - cpe
+groups:
+  c5yBAR:
+    name: Set OCSF Detection Finding fields
+    index: 2

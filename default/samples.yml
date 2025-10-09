@@ -1,0 +1,35 @@
+4mpELf:
+  sampleName: cribl_sentinelone_alerts
+  created: 1756496979789
+  size: 5058
+  numEvents: 1
+einCGe:
+  sampleName: cribl_sentinelone_agents
+  created: 1756496996529
+  size: 3873
+  numEvents: 1
+3C5TnU:
+  sampleName: cribl_sentinelone_assets
+  created: 1756502802574
+  size: 4659
+  numEvents: 1
+FyVnza:
+  sampleName: cribl_sentinelone_vulnerabilities
+  created: 1756503126468
+  size: 973
+  numEvents: 1
+sBVKUa:
+  sampleName: cribl_sentinelone_vulnerabilities_graphql
+  created: 1756503389196
+  size: 1628
+  numEvents: 1
+Nff11e:
+  sampleName: cribl_sentinelone_alerts_graphql
+  created: 1756503610504
+  size: 3064
+  numEvents: 1
+JqEPBF:
+  sampleName: cribl_sentinelone_alerts_graphql2
+  created: 1756503651508
+  size: 3059
+  numEvents: 1

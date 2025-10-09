@@ -1,0 +1,4 @@
+sentinelone_default_splunk_index:
+  type: any
+  lib: custom
+  value: "'sentinelone'"

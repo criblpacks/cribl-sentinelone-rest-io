@@ -1,0 +1,194 @@
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Map SentinelOne Vulnerability data to the Vulnerability Finding (2002)
+        Class
+  - id: serde
+    filter: "true"
+    disabled: false
+    conf:
+      mode: extract
+      type: json
+      srcField: _raw
+    description: Delete Me
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: activity_id
+          value: "2"
+        - name: category_uid
+          value: "2"
+        - disabled: false
+          name: category_name
+          value: "'Findings'"
+        - name: class_uid
+          value: "2002"
+        - disabled: false
+          name: class_name
+          value: "'Vulnerability Finding'"
+        - disabled: false
+          name: confidence_score
+          value: baseScore
+        - name: finding_info
+          value: "{}"
+        - name: finding_info.uid
+          value: id
+        - name: finding_info.title
+          value: application
+          disabled: false
+        - name: message
+          value: cve.description
+        - name: severity_id
+          value: "severity === 'LOW' ? 2 : severity === 'MEDIUM' ? 3 : severity === 'HIGH'
+            ? 4 : severity === 'CRITICAL' ? 5 : 0"
+        - disabled: false
+          name: severity
+          value: "severity === 'LOW' ? 'Low' : severity === 'MEDIUM' ? 'Medium' : severity
+            === 'HIGH' ? 'High' : severity === 'CRITICAL' ? 'Critical' :
+            'Unknown'"
+        - disabled: false
+          name: status_code
+          value: status
+        - name: status_detail
+          value: status + ' on ' + detectionDate
+        - name: status_id
+          value: "status === 'Detected' ? 1 : status"
+        - disabled: false
+          name: status
+          value: "status === 'Detected' ? 'New' : status"
+        - name: time
+          value: detectionTime
+        - name: type_uid
+          value: class_uid * 100 + activity_id
+        - name: vulnerabilities
+          value: "baseScore ? [{cve:{uid: cveId, title: application, cvss:[{base_score:
+            baseScore, version:cvssVersion}]}}] : ''"
+        - disabled: false
+          name: raw_data
+          value: _raw
+    description: Set main OCSF Vulnerability fields
+    groupId: tlhTmH
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: os_object
+          value: "{}"
+        - disabled: false
+          name: os_object.type_id
+          value: 'osType.includes("indows") ? 100 : osType.includes("inux") ? 200 :
+            osType.includes("mac") ? 300 : 0'
+        - disabled: false
+          name: os_object.type
+          value: "osType.includes(\"indows\") ? 'Windows' : osType.includes(\"inux\") ?
+            'Linux' : osType.includes(\"mac\") ? 'macOS' : 'Unknown'"
+    groupId: tlhTmH
+    description: Set os field
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: device
+          value: "{}"
+        - disabled: false
+          name: device.os
+          value: os_object
+        - disabled: false
+          name: device.uid
+          value: endpointId
+        - name: device.hostname
+          value: endpointName
+        - name: device.type_id
+          value: "endpointType == 'server' ? 1 : endpointType.includes('orkstation') ||
+            endpointType.includes('esktop') ? 2 : 0"
+        - name: device.type
+          value: "endpointType == 'server' ? 'Server' :
+            endpointType.includes('orkstation') ||
+            endpointType.includes('esktop') ? 'Desktop' : 'Unknown'"
+    description: Set device Vulnerability field
+    groupId: tlhTmH
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: metadata
+          value: "{}"
+        - name: metadata.product
+          value: "{}"
+        - name: metadata.product.name
+          value: "'SentinelOne API'"
+        - name: metadata.product.vendor_name
+          value: "'SentinelOne'"
+        - name: metadata.product.version
+          value: "'2.1'"
+        - disabled: false
+          name: metadata.version
+          value: "'1.4.0'"
+    description: Set metadata Vulnerability field
+    groupId: tlhTmH
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: unmapped
+          value: "{}"
+        - name: unmapped.application
+          value: application
+        - name: unmapped.applicationName
+          value: applicationName
+        - name: unmapped.applicationVendor
+          value: applicationVendor
+        - name: unmapped.applicationVersion
+          value: applicationVersion
+        - disabled: false
+          name: unmapped.daysDetected
+          value: daysDetected
+        - disabled: false
+          name: unmapped.publishedDate
+          value: publishedDate
+    description: Set unmapped Vulnerability field
+    groupId: tlhTmH
+  - id: eval
+    filter: "true"
+    disabled: true
+    conf:
+      keep:
+        - unmapped.*
+        - message
+        - finding_info.*
+        - time
+        - activity_id
+        - class_uid
+        - type_uid
+        - metadata.*
+        - vulnerabilities.*
+        - confidence*
+        - category*
+        - device*
+        - status*
+        - severity*
+        - raw_data
+      remove:
+        - "*"
+        - _*
+    description: Drop non-OCSF fields
+streamtags:
+  - cpe
+groups:
+  tlhTmH:
+    name: Set OCSF Vulnerability fields
+    index: 2
+    disabled: false
+description: |-
+  Map Crowdstrike Vulnerabilities to OCSF Class 2002 - Vulnerability Finding. 
+
+  https://schema.ocsf.io/1.4.0/classes/vulnerability_finding
