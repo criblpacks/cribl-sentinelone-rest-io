@@ -19,7 +19,12 @@ in_sentinelone_alerts:
       expression: "true"
       minTaskSize: 1MB
       maxTaskSize: 10MB
-      stateTracking: {}
+      stateTracking:
+        stateUpdateExpression: "__timestampExtracted !== false && {latestTime:
+          (state.latestTime || 0) > _time ? state.latestTime : _time}"
+        stateMergeExpression: "(prevState.latestTime || 0) > newState.latestTime ?
+          prevState : newState"
+        enabled: true
       timestampTimezone: UTC
       earliest: -6m@m
       latest: -1m@m
@@ -107,7 +112,7 @@ in_sentinelone_agents:
   removeFields: []
   resumeOnBoot: false
   schedule:
-    cronSchedule: "*/5 * * * *"
+    cronSchedule: 5 4,18 * * *
     maxConcurrentRuns: 1
     skippable: true
     run:
@@ -199,7 +204,7 @@ in_sentinelone_vulnerabilities:
   removeFields: []
   resumeOnBoot: false
   schedule:
-    cronSchedule: "*/5 * * * *"
+    cronSchedule: 2 */2 * * *
     maxConcurrentRuns: 1
     skippable: true
     run:
@@ -213,7 +218,12 @@ in_sentinelone_vulnerabilities:
       expression: "true"
       minTaskSize: 1MB
       maxTaskSize: 10MB
-      stateTracking: {}
+      stateTracking:
+        stateUpdateExpression: "__timestampExtracted !== false && {latestTime:
+          (state.latestTime || 0) > _time ? state.latestTime : _time}"
+        stateMergeExpression: "(prevState.latestTime || 0) > newState.latestTime ?
+          prevState : newState"
+        enabled: true
       timestampTimezone: UTC
       earliest: -6m@m
       latest: -1m@m
@@ -315,7 +325,12 @@ in_sentinelone_alerts_graphql:
       expression: "true"
       minTaskSize: 1MB
       maxTaskSize: 10MB
-      stateTracking: {}
+      stateTracking:
+        stateUpdateExpression: "__timestampExtracted !== false && {latestTime:
+          (state.latestTime || 0) > _time ? state.latestTime : _time}"
+        stateMergeExpression: "(prevState.latestTime || 0) > newState.latestTime ?
+          prevState : newState"
+        enabled: true
       timestampTimezone: UTC
       earliest: -6m@m
       latest: -1m@m
@@ -431,7 +446,7 @@ in_sentinelone_vulnerabilities_graphql:
   removeFields: []
   resumeOnBoot: false
   schedule:
-    cronSchedule: "*/5 * * * *"
+    cronSchedule: 2 */2 * * *
     maxConcurrentRuns: 1
     skippable: true
     run:
@@ -445,7 +460,12 @@ in_sentinelone_vulnerabilities_graphql:
       expression: "true"
       minTaskSize: 1MB
       maxTaskSize: 10MB
-      stateTracking: {}
+      stateTracking:
+        stateUpdateExpression: "__timestampExtracted !== false && {latestTime:
+          (state.latestTime || 0) > _time ? state.latestTime : _time}"
+        stateMergeExpression: "(prevState.latestTime || 0) > newState.latestTime ?
+          prevState : newState"
+        enabled: true
       timestampTimezone: UTC
       earliest: -6m@m
       latest: -1m@m
@@ -551,7 +571,7 @@ in_sentinelone_assets_surface:
   removeFields: []
   resumeOnBoot: false
   schedule:
-    cronSchedule: "*/5 * * * *"
+    cronSchedule: 5 4,18 * * *
     maxConcurrentRuns: 1
     skippable: true
     run:
@@ -565,7 +585,12 @@ in_sentinelone_assets_surface:
       expression: "true"
       minTaskSize: 1MB
       maxTaskSize: 10MB
-      stateTracking: {}
+      stateTracking:
+        stateUpdateExpression: "__timestampExtracted !== false && {latestTime:
+          (state.latestTime || 0) > _time ? state.latestTime : _time}"
+        stateMergeExpression: "(prevState.latestTime || 0) > newState.latestTime ?
+          prevState : newState"
+        enabled: false
       timestampTimezone: UTC
       earliest: -6m@m
       latest: -1m@m
