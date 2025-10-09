@@ -82,7 +82,7 @@ in_sentinelone_alerts:
           value: "1000"
       collectRequestHeaders:
         - name: Authorization
-          value: "`ApiToken YOUR_API_TOKEN`"
+          value: "'ApiToken YOUR_API_TOKEN'"
     destructive: false
     type: rest
   input:
@@ -174,9 +174,7 @@ in_sentinelone_agents:
       collectRequestParams: []
       collectRequestHeaders:
         - name: Authorization
-          value: changeme
-      username: changeme
-      password: changeme
+          value: "'ApiToken YOUR_API_TOKEN'"
     destructive: false
     type: rest
   input:
@@ -278,9 +276,7 @@ in_sentinelone_vulnerabilities:
             60,"%Y-%m-%dT%H:%M:%S.%fZ") '
       collectRequestHeaders:
         - name: Authorization
-          value: changeme
-      username: changeme
-      password: changeme
+          value: "'ApiToken YOUR_API_TOKEN'"
     destructive: false
     type: rest
   input:
@@ -399,9 +395,7 @@ in_sentinelone_alerts_graphql:
             updatedAt } } } } `'
       collectRequestHeaders:
         - name: Authorization
-          value: changeme
-      username: changeme
-      password: changeme
+          value: "'ApiToken YOUR_API_TOKEN'"
       collectBody: "`query criblAlerts {    alerts {      edges {        node
         {          id          asset{            agentUuid            assetType\
         Classifier            category            id            lastLoggedInUse\
@@ -521,9 +515,7 @@ in_sentinelone_vulnerabilities_graphql:
             vendor } } }}`'
       collectRequestHeaders:
         - name: Authorization
-          value: changeme
-      username: changeme
-      password: changeme
+          value: "'ApiToken YOUR_API_TOKEN'"
       collectBody: "`query criblAlerts {    alerts {      edges {        node
         {          id          asset{            agentUuid            assetType\
         Classifier            category            id            lastLoggedInUse\
@@ -628,9 +620,7 @@ in_sentinelone_assets_surface:
       collectRequestParams: []
       collectRequestHeaders:
         - name: Authorization
-          value: changeme
-      username: changeme
-      password: changeme
+          value: "'ApiToken YOUR_API_TOKEN'"
     destructive: false
     type: rest
   input:
