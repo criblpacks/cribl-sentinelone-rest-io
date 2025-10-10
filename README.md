@@ -55,11 +55,11 @@ In general, it should be fine to enable all six Collectors, but the GraphQL API 
     * An API token. SentinelOne has two methods for generating a token - via creating a Service User (*recommended*) or Ad-hoc by an account with the correct permissions. The Service User method allows you to set the token expiration to something longer than 30 days - the Ad-hoc method is hard-coded to a 30 day expiration. 
     * Update the Collect header field named `Authorization` in the following format: *'ApiToken YOUR_API_TOKEN'* (the value must be a valid JavaScript string)
 * Perform a Run > Preview to verify that each Collector works correctly.
-* Schedule each Collector - they include a default cron schedule and those that require State Tracking have it enabled. Update as desired.
+* Schedule each Collector - they all include a default cron schedule and those that require State Tracking have it enabled. Update as desired.
 
 ### Configure Output Format
 
-Each data type can be configured to output data in either OCSF or normalized JSON (Splunk) format. Enable *only one* format for each of the following pipelines:
+Each data type can be configured to output data in either normalized JSON (default), OCSF, or Splunk (`_raw` + Splunk fields) format. Enable *only one* format for each of the following pipelines:
 * `cribl_sentinelone_alerts`
 * `cribl_sentinelone_alerts_graphql`
 * `cribl_sentinelone_vulnerabilities`
