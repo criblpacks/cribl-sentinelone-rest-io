@@ -54,6 +54,7 @@ In general, it should be fine to enable all six Collectors, but the GraphQL API 
     * The SentinelOne Management hostname - this should be something like `https://<mgmt_hostname>.sentinelone.net`. Update the variable `sentinelone_management_host` to this value.
     * An API token. SentinelOne has two methods for generating a token - via creating a Service User (*recommended*) or Ad-hoc by an account with the correct permissions. The Service User method allows you to set the token expiration to something longer than 30 days - the Ad-hoc method is hard-coded to a 30 day expiration. 
     * Update the `sentinelone_api_token` variable with the token value. 
+* Perform a Commit/Deploy (otherwise Preview will throw errors)
 * Perform a Run > Preview to verify that each Collector works correctly.
 * Schedule each Collector - they all include a default cron schedule and those that require State Tracking have it enabled. Update as desired.
 

@@ -396,10 +396,10 @@ in_sentinelone_alerts_graphql:
       collectRequestParams:
         - name: query
           value: '`query criblAlerts {    alerts (first: 1000, filters: [{fieldId:
-            "updatedAt", dateTimeRange: {end: ${latest ? latest :
-            Math.round(Date.now()/1000)}, start: ${state.latestTime ?
-            Math.round(state.latestTime) : Math.round(Date.now()/1000 -
-            30*24*60*60)}, startInclusive: true}}]){      edges { node {
+            "updatedAt", dateTimeRange: {end: ${latest ? Math.round(latest*1000)
+            : Math.round(Date.now())}, start: ${state.latestTime ?
+            Math.round(state.latestTime*1000) : Math.round(Date.now() -
+            30*24*60*60*1000)}, startInclusive: true}}]){      edges { node {
             analystVerdict analytics { category name typeValue uid } asset {
             agentUuid agentVersion assetTypeClassifier category
             connectivityToConsole id lastLoggedInUser name osType osVersion
@@ -533,20 +533,20 @@ in_sentinelone_vulnerabilities_graphql:
       clientSecretParamValue: ""
       collectRequestParams:
         - name: query
-          value: '`query criblVulberabilities { vulnerabilities ( filters: [{fieldId:
-            "detectedAt", dateTimeRange: {end: ${latest ? latest :
-            Math.round(Date.now()/1000)}, start: ${state.latestTime ?
-            Math.round(state.latestTime) : Math.round(Date.now()/1000 -
-            120*24*60*60)}, startInclusive: true}}]){ edges { node {
-            analystVerdict asset { category cloudInfo { accountId accountName
-            providerName region resourceId resourceLink } criticality domain id
-            kubernetesInfo { cluster clusterId namespace } name osType
-            privileged subcategory type } assignee { deleted email fullName id }
-            cve { epssScore exploitMaturity exploitedInTheWild id publishedDate
-            remediationLevel reportConfidence score score } detectedAt
-            exclusionPolicyId id name product scope { account { id name } group
-            { id name } site { id name } } severity software { fixVersion name
-            type vendor version } status vendor } } }}`'
+          value: '`query criblVulnerabilities { vulnerabilities ( filters: [{fieldId:
+            "detectedAt", dateTimeRange: {end: ${latest ?
+            Math.round(latest*1000) : Math.round(Date.now())}, start:
+            ${state.latestTime ? Math.round(state.latestTime*1000) :
+            Math.round(Date.now() - 30*24*60*60*1000)}, startInclusive:
+            true}}]){ edges { node { analystVerdict asset { category cloudInfo {
+            accountId accountName providerName region resourceId resourceLink }
+            criticality domain id kubernetesInfo { cluster clusterId namespace }
+            name osType privileged subcategory type } assignee { deleted email
+            fullName id } cve { epssScore exploitMaturity exploitedInTheWild id
+            publishedDate remediationLevel reportConfidence score score }
+            detectedAt exclusionPolicyId id name product scope { account { id
+            name } group { id name } site { id name } } severity software {
+            fixVersion name type vendor version } status vendor } } }}`'
       collectRequestHeaders:
         - name: Authorization
           value: "`ApiToken ${C.vars['sentinelone_api_token']}`"
