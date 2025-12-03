@@ -51,6 +51,7 @@ in_sentinelone_alerts:
       decodeUrl: true
       rejectUnauthorized: false
       captureHeaders: false
+      stopOnEmptyResults: false
       safeHeaders: []
       retryRules:
         type: backoff
@@ -73,21 +74,23 @@ in_sentinelone_alerts:
       authHeaderExpr: "`Bearer ${token}`"
       tokenRespAttribute: token
       clientSecretParamName: client_secret
-      collectUrl: "'https://YOUR_S1_SITE.sentinelone.net/web/api/v2.1/cloud-detection\
-        /alerts'\r\n"
+      collectUrl: "`https://${C.vars['sentinelone_management_host']}.sentinelone.net/\
+        web/api/v2.1/cloud-detection/alerts`"
       clientSecretParamValue: ""
       collectRequestParams:
         - name: createdAt__gte
-          value: 'C.Time.strftime(earliest ? earliest : Date.now()/1000 -
+          value: 'C.Time.strftime(state.latestTime ? state.latestTime : Date.now()/1000 -
             30*24*60*60,"%Y-%m-%dT%H:%M:%S.%fZ") '
         - name: createdAt__lte
-          value: 'C.Time.strftime(latest ? latest : Date.now()/1000 -
-            60,"%Y-%m-%dT%H:%M:%S.%fZ") '
+          value: 'C.Time.strftime(latest ? latest :
+            Date.now()/1000,"%Y-%m-%dT%H:%M:%S.%fZ") '
         - name: limit
           value: "1000"
       collectRequestHeaders:
         - name: Authorization
-          value: "'ApiToken YOUR_API_TOKEN'"
+          value: "`ApiToken ${C.vars['sentinelone_api_token']}`"
+      username: changeme
+      password: changeme
     destructive: false
     type: rest
   input:
@@ -152,6 +155,7 @@ in_sentinelone_agents:
       decodeUrl: true
       rejectUnauthorized: false
       captureHeaders: false
+      stopOnEmptyResults: false
       safeHeaders: []
       retryRules:
         type: backoff
@@ -174,12 +178,15 @@ in_sentinelone_agents:
       authHeaderExpr: "`Bearer ${token}`"
       tokenRespAttribute: token
       clientSecretParamName: client_secret
-      collectUrl: "'https://YOUR_S1_SITE.sentinelone.net/web/api/v2.1/agents'\r\n"
+      collectUrl: "`https://${C.vars['sentinelone_management_host']}.sentinelone.net/\
+        web/api/v2.1/agents`"
       clientSecretParamValue: ""
       collectRequestParams: []
       collectRequestHeaders:
         - name: Authorization
-          value: "'ApiToken YOUR_API_TOKEN'"
+          value: "`ApiToken ${C.vars['sentinelone_api_token']}`"
+      username: changeme
+      password: changeme
     destructive: false
     type: rest
   input:
@@ -250,6 +257,7 @@ in_sentinelone_vulnerabilities:
       decodeUrl: true
       rejectUnauthorized: false
       captureHeaders: false
+      stopOnEmptyResults: false
       safeHeaders: []
       retryRules:
         type: backoff
@@ -272,21 +280,23 @@ in_sentinelone_vulnerabilities:
       authHeaderExpr: "`Bearer ${token}`"
       tokenRespAttribute: token
       clientSecretParamName: client_secret
-      collectUrl: "'https://YOUR_S1_SITE.sentinelone.net/web/api/v2.1/application-man\
-        agement/risks'\r\n"
+      collectUrl: "`https://${C.vars['sentinelone_management_host']}.sentinelone.net/\
+        web/api/v2.1/application-management/risks`"
       clientSecretParamValue: ""
       collectRequestParams:
         - name: limit
           value: "1000"
         - name: detectionDate__gte
-          value: 'C.Time.strftime(earliest ? earliest : Date.now()/1000 -
+          value: 'C.Time.strftime(state.latestTime ? state.latestTime : Date.now()/1000 -
             30*24*60*60,"%Y-%m-%dT%H:%M:%S.%fZ") '
         - name: detectionDate__lte
-          value: 'C.Time.strftime(latest ? latest : Date.now()/1000 -
-            60,"%Y-%m-%dT%H:%M:%S.%fZ") '
+          value: 'C.Time.strftime(latest ? latest :
+            Date.now()/1000,"%Y-%m-%dT%H:%M:%S.%fZ") '
       collectRequestHeaders:
         - name: Authorization
-          value: "'ApiToken YOUR_API_TOKEN'"
+          value: "`ApiToken ${C.vars['sentinelone_api_token']}`"
+      username: changeme
+      password: changeme
     destructive: false
     type: rest
   input:
@@ -357,6 +367,7 @@ in_sentinelone_alerts_graphql:
       decodeUrl: true
       rejectUnauthorized: false
       captureHeaders: false
+      stopOnEmptyResults: false
       safeHeaders: []
       retryRules:
         type: backoff
@@ -379,38 +390,40 @@ in_sentinelone_alerts_graphql:
       authHeaderExpr: "`Bearer ${token}`"
       tokenRespAttribute: token
       clientSecretParamName: client_secret
-      collectUrl: "'https://YOUR_S1_SITE.sentinelone.net/web/api/v2.1/unifiedalerts/g\
-        raphql'\r\n"
+      collectUrl: "`https://${C.vars['sentinelone_management_host']}.sentinelone.net/\
+        web/api/v2.1/unifiedalerts/graphql`"
       clientSecretParamValue: ""
       collectRequestParams:
         - name: query
           value: '`query criblAlerts {    alerts (first: 1000, filters: [{fieldId:
-            "updatedAt", dateTimeRange: {end: ` + `${latest ? latest :
-            Math.round(Date.now()/1000)}` + `, start: ` +  `${earliest ?
-            earliest : Math.round(Date.now()/1000 - 30*24*60*60)}` + `,
-            startInclusive: true}}]){      edges { node { analystVerdict
-            analytics { category name typeValue uid } asset { agentUuid
-            agentVersion assetTypeClassifier category connectivityToConsole id
-            lastLoggedInUser name osType osVersion pendingReboot policy
-            subcategory } assignee { email fullName userId } attackSurfaces
-            classification confidenceLevel createdAt dataSources description
-            detectedAt detectionSource { product vendor } detectionTime { asset
-            { agentVersion consoleIpAddress domain ipV4 ipV6 lastLoggedInUser
-            osName osRevision osType policy subscriptionTime } attacker { host
-            ip } cloud { accountId cloudProvider image instanceId instanceSize
-            location network tags } kubernetes { clusterName containerId
-            containerImageName containerLabels containerName controllerLabels
-            controllerName controllerType namespaceLabels namespaceName
-            nodeLabels nodeName podLabels podName } scope { accountId
-            accountName groupName siteName } targetUser { domain emailAddress
-            name } } externalId firstSeenAt id lastSeenAt name noteExists
-            process { cmdLine file { certSubject md5 name path sha1 sha256 }
-            parentName } realTime { scope { account { id name } group { id name
-            } site { id name } } } result severity status storylineId ticketId
-            updatedAt } } } } `'
+            "updatedAt", dateTimeRange: {end: ${latest ? latest :
+            Math.round(Date.now()/1000)}, start: ${state.latestTime ?
+            Math.round(state.latestTime) : Math.round(Date.now()/1000 -
+            30*24*60*60)}, startInclusive: true}}]){      edges { node {
+            analystVerdict analytics { category name typeValue uid } asset {
+            agentUuid agentVersion assetTypeClassifier category
+            connectivityToConsole id lastLoggedInUser name osType osVersion
+            pendingReboot policy subcategory } assignee { email fullName userId
+            } attackSurfaces classification confidenceLevel createdAt
+            dataSources description detectedAt detectionSource { product vendor
+            } detectionTime { asset { agentVersion consoleIpAddress domain ipV4
+            ipV6 lastLoggedInUser osName osRevision osType policy
+            subscriptionTime } attacker { host ip } cloud { accountId
+            cloudProvider image instanceId instanceSize location network tags }
+            kubernetes { clusterName containerId containerImageName
+            containerLabels containerName controllerLabels controllerName
+            controllerType namespaceLabels namespaceName nodeLabels nodeName
+            podLabels podName } scope { accountId accountName groupName siteName
+            } targetUser { domain emailAddress name } } externalId firstSeenAt
+            id lastSeenAt name noteExists process { cmdLine file { certSubject
+            md5 name path sha1 sha256 } parentName } realTime { scope { account
+            { id name } group { id name } site { id name } } } result severity
+            status storylineId ticketId updatedAt } } } } `'
       collectRequestHeaders:
         - name: Authorization
-          value: "'ApiToken YOUR_API_TOKEN'"
+          value: "`ApiToken ${C.vars['sentinelone_api_token']}`"
+      username: changeme
+      password: changeme
       collectBody: "`query criblAlerts {    alerts {      edges {        node
         {          id          asset{            agentUuid            assetType\
         Classifier            category            id            lastLoggedInUse\
@@ -492,6 +505,7 @@ in_sentinelone_vulnerabilities_graphql:
       decodeUrl: true
       rejectUnauthorized: false
       captureHeaders: false
+      stopOnEmptyResults: false
       safeHeaders: []
       retryRules:
         type: backoff
@@ -514,28 +528,30 @@ in_sentinelone_vulnerabilities_graphql:
       authHeaderExpr: "`Bearer ${token}`"
       tokenRespAttribute: token
       clientSecretParamName: client_secret
-      collectUrl: "'https://YOUR_S1_SITE.sentinelone.net/web/api/v2.1/xspm/findings/v\
-        ulnerabilities/graphql'\r\n"
+      collectUrl: "`https://${C.vars['sentinelone_management_host']}.sentinelone.net/\
+        web/api/v2.1/xspm/findings/vulnerabilities/graphql`"
       clientSecretParamValue: ""
       collectRequestParams:
         - name: query
           value: '`query criblVulberabilities { vulnerabilities ( filters: [{fieldId:
-            "detectedAt", dateTimeRange: {end: ` + `${latest ? latest :
-            Math.round(Date.now()/1000)}` + `, start: ` +  `${earliest ?
-            earliest : Math.round(Date.now()/1000 - 120*24*60*60)}` + `,
-            startInclusive: true}}]){ edges { node { analystVerdict asset {
-            category cloudInfo { accountId accountName providerName region
-            resourceId resourceLink } criticality domain id kubernetesInfo {
-            cluster clusterId namespace } name osType privileged subcategory
-            type } assignee { deleted email fullName id } cve { epssScore
-            exploitMaturity exploitedInTheWild id publishedDate remediationLevel
-            reportConfidence score score } detectedAt exclusionPolicyId id name
-            product scope { account { id name } group { id name } site { id name
-            } } severity software { fixVersion name type vendor version } status
-            vendor } } }}`'
+            "detectedAt", dateTimeRange: {end: ${latest ? latest :
+            Math.round(Date.now()/1000)}, start: ${state.latestTime ?
+            Math.round(state.latestTime) : Math.round(Date.now()/1000 -
+            120*24*60*60)}, startInclusive: true}}]){ edges { node {
+            analystVerdict asset { category cloudInfo { accountId accountName
+            providerName region resourceId resourceLink } criticality domain id
+            kubernetesInfo { cluster clusterId namespace } name osType
+            privileged subcategory type } assignee { deleted email fullName id }
+            cve { epssScore exploitMaturity exploitedInTheWild id publishedDate
+            remediationLevel reportConfidence score score } detectedAt
+            exclusionPolicyId id name product scope { account { id name } group
+            { id name } site { id name } } severity software { fixVersion name
+            type vendor version } status vendor } } }}`'
       collectRequestHeaders:
         - name: Authorization
-          value: "'ApiToken YOUR_API_TOKEN'"
+          value: "`ApiToken ${C.vars['sentinelone_api_token']}`"
+      username: changeme
+      password: changeme
       collectBody: "`query criblAlerts {    alerts {      edges {        node
         {          id          asset{            agentUuid            assetType\
         Classifier            category            id            lastLoggedInUse\
@@ -590,7 +606,7 @@ in_sentinelone_assets_surface:
           (state.latestTime || 0) > _time ? state.latestTime : _time}"
         stateMergeExpression: "(prevState.latestTime || 0) > newState.latestTime ?
           prevState : newState"
-        enabled: false
+        enabled: true
       timestampTimezone: UTC
       earliest: -6m@m
       latest: -1m@m
@@ -617,6 +633,7 @@ in_sentinelone_assets_surface:
       decodeUrl: true
       rejectUnauthorized: false
       captureHeaders: false
+      stopOnEmptyResults: false
       safeHeaders: []
       retryRules:
         type: backoff
@@ -639,13 +656,15 @@ in_sentinelone_assets_surface:
       authHeaderExpr: "`Bearer ${token}`"
       tokenRespAttribute: token
       clientSecretParamName: client_secret
-      collectUrl: "'https://YOUR_S1_SITE.sentinelone.net/web/api/v2.1/xdr/assets/surf\
-        ace/endpoint'\r\n"
+      collectUrl: "`https://${C.vars['sentinelone_management_host']}.sentinelone.net/\
+        web/api/v2.1/xdr/assets/surface/endpoint`"
       clientSecretParamValue: ""
       collectRequestParams: []
       collectRequestHeaders:
         - name: Authorization
-          value: "'ApiToken YOUR_API_TOKEN'"
+          value: "`ApiToken ${C.vars['sentinelone_api_token']}`"
+      username: changeme
+      password: changeme
     destructive: false
     type: rest
   input:
