@@ -37,6 +37,7 @@ functions:
       dstField: json_parsed
       remove:
         - _raw
+      fieldFilterExpr: value !== '' && value !== null
     groupId: VQH9ac
   - id: code
     filter: "true"

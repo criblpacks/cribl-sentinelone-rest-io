@@ -37,6 +37,7 @@ functions:
       dstField: json_parsed
       remove:
         - _raw
+      fieldFilterExpr: value !== '' && value !== null
     groupId: VQH9ac
   - id: flatten
     filter: "true"
@@ -44,6 +45,7 @@ functions:
     conf:
       fields:
         - json_parsed
+      prefix: ""
       depth: 2
       delimiter: _
     groupId: VQH9ac

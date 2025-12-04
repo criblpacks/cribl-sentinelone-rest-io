@@ -51,9 +51,10 @@ In general, it should be fine to enable all six Collectors, but the GraphQL API 
 ### Configure the Collectors
 
 * Obtain the following from your SentinelOne Administrator:
-    * The SentinelOne Management hostname - this should be something like `https://<region>-<type>.sentinelone.net`. It's the host part of the URL used to login to SentinelOne. Replace `YOUR_S1_SITE` in the Collect URL field for each Collector with the correct value. 
+    * The SentinelOne Management hostname - this should be something like `https://<mgmt_hostname>.sentinelone.net`. Update the variable `sentinelone_management_host` to this value.
     * An API token. SentinelOne has two methods for generating a token - via creating a Service User (*recommended*) or Ad-hoc by an account with the correct permissions. The Service User method allows you to set the token expiration to something longer than 30 days - the Ad-hoc method is hard-coded to a 30 day expiration. 
-    * Update the Collect header field named `Authorization` in the following format: *'ApiToken YOUR_API_TOKEN'* (the value must be a valid JavaScript string)
+    * Update the `sentinelone_api_token` variable with the token value. 
+* Perform a Commit/Deploy (otherwise Preview will throw errors)
 * Perform a Run > Preview to verify that each Collector works correctly.
 * Schedule each Collector - they all include a default cron schedule and those that require State Tracking have it enabled. Update as desired.
 
@@ -76,7 +77,9 @@ Once everything is configured, perform a Commit & Deploy to enable data collecti
 ### Variables
 
 The Pack has the following variables:
-* `sentinelone_default_splunk_index`: Default index for the Splunk output - defaults to `sentinelone`.
+* `sentinelone_management_host`: Your SentinelOne Mgmt Hostname -  https://<mgmt_hostname>.sentinelone.net
+* `sentinelone_api_token`: Your SentinelOne API token
+* `sentinelone_default_splunk_index`: Default index for the Splunk output - defaults to `sentinelone`
 
 ## Upgrades
 
@@ -84,8 +87,12 @@ Upgrading certain Cribl Packs using the same Pack ID can have unintended consequ
 
 ## Release Notes
 
+### Version 1.1.0
+- REST Collectors now rely on variables for all configuration
+- Collector State Tracking and pagination fixes for Alerts and Vulnerabilities
+
 ### Version 1.0.0
-Initial release
+- Initial release
 
 ## Contributing to the Pack
 
