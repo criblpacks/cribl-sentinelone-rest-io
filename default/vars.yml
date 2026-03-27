@@ -5,9 +5,9 @@ sentinelone_management_host:
   description: "REQUIRED: Your SentinelOne Mgmt
     Hostname -  https://<mgmt_hostname>.sentinelone.net"
 sentinelone_api_token:
-  type: string
+  type: encryptedString
   lib: custom
-  value: "'YOUR_API_TOKEN'"
+  value: "YOUR_API_TOKEN"
   description: "REQUIRED: Your Sentinelone API token"
 sentinelone_default_splunk_index:
   type: any

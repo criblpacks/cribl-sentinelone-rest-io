@@ -2,7 +2,10 @@
 ----
 ## About this Pack
 
-This pack is built as a complete SOURCE + DESTINATION solution (identified by the IO suffix). Data collection and delivery happen entirely within the pack's context, eliminating the need to connect it to globally defined Sources and Destinations. 
+This pack is built as a complete SOURCE + DESTINATION solution (identified by the IO suffix). Data collection and delivery happen entirely within the Pack's context - you can choose how data arrives at a DESTINATION:
+*  *Send to Worker Group Routes* (the default): data is sent to the top-level Worker Group Routes.
+*  *Default Destination*: data is sent to the Worker Group's [Default Destination](https://docs.cribl.io/stream/destinations-default/). 
+*  *In-Pack Destination*: data is sent to one or more Destinations configured within the Pack.
 
 This Pack is designed to collect, process, and output Microsoft SentinelOne data via the SentinelOne MGMT REST and GraphQL API's. It currently supports the following endpoints (documentation is behind a paywall, unfortunately):
 * SentinelOne Alerts via MGMT REST API
@@ -43,18 +46,17 @@ If you have *not* opted in to Singularity Operations Center *or* you have existi
 In general, it should be fine to enable all six Collectors, but the GraphQL API tends to have more information than the MGMT API.
 
 ## Deployment
- This pack is configured by default to use the Worker Group's *Default Destination*.
-* To use the *Default Destination*: No changes are required. The pack will route the data to the destination currently set as the Default on the Worker Group.
-* To use a different Destination: You must update the pack's routes to specify your desired Destination.
-* For immediate functionality without requiring Pack route filter expression modifications, every bundled Source within this pack adds a hidden field: `__packsource`. This field allows for seamless routing based on the Pack source.
-
+* Every bundled Source within this pack adds a hidden field: `__packsource`. This field allows for simplified routing based on the Pack source.
+* This pack is configured by default to use the Destination *Send to Worker Group Routes*. You *must* add either a Worker Group Route or rely on the Default Destination.
+* To explicitly use the Worker Group's *Default Destination*, change the Pack's Routes to *default:default*. The Pack will then route the data to the destination currently set as the Default on the Worker Group.
+ 
 ### Configure the Collectors
 
 * Obtain the following from your SentinelOne Administrator:
     * The SentinelOne Management hostname - this should be something like `https://<mgmt_hostname>.sentinelone.net`. Update the variable `sentinelone_management_host` to this value.
     * An API token. SentinelOne has two methods for generating a token - via creating a Service User (*recommended*) or Ad-hoc by an account with the correct permissions. The Service User method allows you to set the token expiration to something longer than 30 days - the Ad-hoc method is hard-coded to a 30 day expiration. 
     * Update the `sentinelone_api_token` variable with the token value. 
-* Perform a Commit/Deploy (otherwise Preview will throw errors)
+* Perform a Commit/Deploy (otherwise Preview may throw errors)
 * Perform a Run > Preview to verify that each Collector works correctly.
 * Schedule each Collector - they all include a default cron schedule and those that require State Tracking have it enabled. Update as desired.
 
@@ -86,6 +88,8 @@ The Pack has the following variables:
 Upgrading certain Cribl Packs using the same Pack ID can have unintended consequences. See [Upgrading an Existing Pack](https://docs.cribl.io/stream/packs#upgrading) for details.
 
 ## Release Notes
+### Version 1.1.1
+* Updated Route Destinations to "Send to Worker Group Routes". See above for details.
 
 ### Version 1.1.0
 - REST Collectors now rely on variables for all configuration
